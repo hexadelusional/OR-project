@@ -5,18 +5,25 @@ import copy
 def main():
     print("Welcome to our Operations Research project !")
     
-    while True:
+    running = True
+    while running:
         # Ask the user to choose a file
-        while True:
+        file_choice_loop = True
+        while file_choice_loop:
             try:
-                file_choice = int(input("\nChoose a number between 1 and 10: "))
-                if 1 <= file_choice <= 10:
+                file_choice = int(input("\nChoose a number between 1 and 10 (0 to exit): "))
+                if 0 <= file_choice <= 10:
                     break
                 else:
-                    print("Choose a number between 1 and 10: ")
+                    print("Choose a number between 1 and 10 (0 to exit): ")
             except ValueError:
                 print("Invalid number. Choose a number between 1 and 10: ")
         
+        if file_choice == 0:
+            print("ok Bye !")
+            break 
+
+
         # File path
         fichier = f"Propositions/Proposition {file_choice}.txt"
         print(f"File selected : {fichier}")
@@ -36,18 +43,22 @@ def main():
         if graph.has_costs():
             print("3. Minimal cost flow (Bellman-Ford)")
         
-        while True:
+        algo_choice_loop = True
+        while algo_choice_loop:
             try:
-                algo_choice = int(input("\nEnter the number of the algorithm: "))
-                    
-                if not graph.has_costs() and algo_choice in [1, 2]:
+                algo_choice = int(input("\nEnter the number of the algorithm (0 to go back): "))
+
+                if algo_choice == 0:
+                    print("You choose to go back.")
+                    algo_choice_loop = False
+                elif not graph.has_costs() and algo_choice in [1, 2]:
                     break
                 elif graph.has_costs() and algo_choice in [1, 2, 3]:
                     break
                 else:
                     print("Please enter a valid number.")
             except ValueError:
-                print("Invalid number. Choose a number between 1 and 10. ")
+                print("Invalid input. Please indicate a algorithm number. ")
 
         # Execute the chosen algorithm
         if algo_choice == 1:
