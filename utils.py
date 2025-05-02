@@ -27,7 +27,7 @@ def annotate_matrix(to_annotate: list[list[Any]], annotation_charset: list[Any] 
     for i in range(len(annotated_version)):
         for j in range(len(annotated_version[i])):
             if annotated_version[i][j] == 0:
-                annotated_version[i][j] = "*"  # Replace 0 with "*"
+                annotated_version[i][j] = " "  # Replace 0 with "*"
 
     # Add headers
     header_row = [" "] + annotation_charset

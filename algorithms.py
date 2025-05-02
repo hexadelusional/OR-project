@@ -111,13 +111,19 @@ def push_relabel(graph):
         graph.flow[v][u] -= delta  # Mettre à jour le flot opposé de v à u
         excess[u] -= delta  # Réduire le flot excédentaire à u
         excess[v] += delta  # Augmenter le flot excédentaire à v
+        print(f"\nPush from {u} to {v} (excess diff = {delta}):")
+        
     
+
     def relabel(u):  # Fonction pour relabeler un sommet u
         min_height = float('Inf')  # Initialiser la hauteur minimale à l'infini
         for v in range(n):  # Parcourir tous les sommets
             if graph.capacity[u][v] > graph.flow[u][v]:  # Si la capacité résiduelle est positive
                 min_height = min(min_height, height[v])  # Trouver la hauteur minimale parmi les voisins
+        old_height = height[u]
         height[u] = min_height + 1  # Relabeler u avec la nouvelle hauteur
+        print(f"\nRelabel node {u} (height {old_height} → {height[u]}):")
+        
 
     def discharge(u):  # Fonction pour décharger un sommet u
         while excess[u] > 0:  # Tant qu'il y a un flot excédentaire à u
