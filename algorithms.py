@@ -1,4 +1,5 @@
 from collections import deque
+from utils import print_matrix, annotate_matrix
 
 def bfs(residual, source, sink, parent):
     n = len(residual)  # Nombre de sommets dans le graphe résiduel
@@ -39,14 +40,14 @@ def ford_fulkerson(graph):
 
 
 def display_bfs_trace(parent, source, sink, n):
-    print("BFS :")
+    print("\n\033[1mBFS trace:\033[0m")
     visited_nodes = []
     for i in range(n):
         if parent[i] != -1 and i != source:
             node = 't' if i == sink else chr(i + 96)
             pred = 's' if parent[i] == source else ('t' if parent[i] == sink else chr(parent[i] + 96))
             visited_nodes.append(f"Π({node}) = {pred}")
-    print("; ".join(visited_nodes))
+    print(" → ".join(visited_nodes))
 
 def get_path_flow(residual, parent, source, sink):
     flow = float('inf')
@@ -79,24 +80,10 @@ def update_residual_and_flow(graph, parent, source, sink, path_flow):
         graph.flow[v][u] -= path_flow
         v = u
 
-
 def display_residual_graph(residual):
-    print("Residual graph :")
-    n = len(residual)
-
-    # Header
-    print("   ", end="")
-    for i in range(n):
-        print(f"  {'s' if i == 0 else 't' if i == n - 1 else chr(i + 96)}", end="")
-    print()
-
-    # Rows
-    for i in range(n):
-        print(f"{'s' if i == 0 else 't' if i == n - 1 else chr(i + 96)} ", end="")
-        for j in range(n):
-            val = residual[i][j]
-            print(f"{val:4}" if val != 0 else "   *", end="")
-        print()
+    print("\n\033[1mRESIDUAL GRAPH:\033[0m\n")
+    annotated = annotate_matrix(residual)
+    print_matrix(annotated)
 
 
 

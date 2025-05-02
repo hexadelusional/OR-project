@@ -1,3 +1,6 @@
+from utils import print_matrix, annotate_matrix
+
+
 class Graphic:
     def __init__(self, n):
         # Initialisation de la classe Graphic avec n sommets
@@ -47,98 +50,25 @@ class Graphic:
         graph.residual = [row[:] for row in graph.capacity]
         return graph
 
-    # Affiche la matrice des flots
+    # Displayal of the flow matrix
     def display_flow(self):
-        flow = self.flow
-        print("\n\nFlow matrix:\n")
-        
-        # Affiche l'en-tête de la matrice
-        print("   ", end="")
-        for i in range(len(flow)):
-            if i == 0:
-                print("  s", end="")
-            elif i == len(flow) - 1:
-                print("   t", end="")
-            else:
-                print(f"   {chr(i + 96)}", end="")
-        print()
-        
-        # Parcourt chaque tâche pour créer les lignes de la matrice
-        for i in range(len(flow)):
-            if i == 0:
-                print("s ", end="")
-            elif i == len(flow) - 1:
-                print("t ", end="")
-            else:
-                print(f"{chr(i + 96)} ", end="")
-            
-            for j in range(len(flow)):
-                if flow[i][j] != 0:
-                    print(f"{flow[i][j]:4}", end="")
-                else:
-                    print("   *", end="")
-            print()
+        print("\n\n\033[1mFLOW MATRIX:\033[0m\n")
+        annotated_flow = annotate_matrix(self.flow)
+        print_matrix(annotated_flow)
 
-    # Affiche la matrice des capacités et des coûts (si disponible)
+    # Display of the Capacity and Cost matrices
     def display(self):
-        
-        capacity = self.capacity
-        print("\n\nCapacity matrix:\n")
-        
-        # Affiche l'en-tête de la matrice
-        print("   ", end="")
-        for i in range(len(capacity)):
-            if i == 0:
-                print("  s", end="")
-            elif i == len(capacity) - 1:
-                print("   t", end="")
-            else:
-                print(f"   {chr(i + 96)}", end="")
-        print()
-        
-        # Parcourt chaque tâche pour créer les lignes de la matrice
-        for i in range(len(capacity)):
-            if i == 0:
-                print("s ", end="")
-            elif i == len(capacity) - 1:
-                print("t ", end="")
-            else:
-                print(f"{chr(i + 96)} ", end="")
-            
-            for j in range(len(capacity)):
-                if capacity[i][j] != 0:
-                    print(f"{capacity[i][j]:4}", end="")
-                else:
-                    print("   *", end="")
-            print()
-            
+        print("\n\n\033[1mCAPACITY MATRIX:\033[0m\n")
+        annotated_capacity = annotate_matrix(self.capacity)
+        print_matrix(annotated_capacity)
+
         if self.cost:
-            cost = self.cost
-            print("\n\nCost matrix:\n")
-            
-            # Affiche l'en-tête de la matrice
-            print("   ", end="")
-            for i in range(len(cost)):
-                if i == 0:
-                    print("  s", end="")
-                elif i == len(cost) - 1:
-                    print("   t", end="")
-                else:
-                    print(f"   {chr(i + 96)}", end="")
-            print()
-            
-            # Parcourt chaque tâche pour créer les lignes de la matrice
-            for i in range(len(cost)):
-                if i == 0:
-                    print("s ", end="")
-                elif i == len(cost) - 1:
-                    print("t ", end="")
-                else:
-                    print(f"{chr(i + 96)} ", end="")
-                
-                for j in range(len(cost)):
-                    if cost[i][j] != 0:
-                        print(f"{cost[i][j]:4}", end="")
-                    else:
-                        print("   *", end="")
-                print()
+            print("\n\n\033[1mCOST MATRIX:\033[0m\n")
+            annotated_cost = annotate_matrix(self.cost)
+            print_matrix(annotated_cost)
+
+    def display_residual(self):
+        print("\n\n\033[1m⋆ Residual graph:\033[0m\n")
+        annotated_residual = annotate_matrix(self.residual)
+        print_matrix(annotated_residual)
+
