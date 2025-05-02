@@ -50,7 +50,7 @@ class Graphic:
     # Affiche la matrice des flots
     def display_flow(self):
         flow = self.flow
-        print("\n\n* Flow matrix:\n")
+        print("\n\nFlow matrix:\n")
         
         # Affiche l'en-tête de la matrice
         print("   ", end="")
@@ -83,7 +83,7 @@ class Graphic:
     def display(self):
         
         capacity = self.capacity
-        print("\n\n* Capacity matrix:\n")
+        print("\n\nCapacity matrix:\n")
         
         # Affiche l'en-tête de la matrice
         print("   ", end="")
@@ -114,7 +114,7 @@ class Graphic:
             
         if self.cost:
             cost = self.cost
-            print("\n\n* Cost matrix:\n")
+            print("\n\nCost matrix:\n")
             
             # Affiche l'en-tête de la matrice
             print("   ", end="")
