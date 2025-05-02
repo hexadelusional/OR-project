@@ -1,4 +1,5 @@
 from collections import deque
+from utils import print_matrix, annotate_matrix
 
 def bfs(residual, source, sink, parent):
     n = len(residual)  # Nombre de sommets dans le graphe résiduel
@@ -19,31 +20,71 @@ def bfs(residual, source, sink, parent):
 
 
 def ford_fulkerson(graph):
-    source = 0  # Définir la source comme le premier sommet
-    sink = graph.n - 1  # Définir le puits comme le dernier sommet
-    parent = [-1] * graph.n  # Initialiser le tableau des parents pour stocker le chemin trouvé par BFS
-    max_flow = 0  # Initialiser le flot maximum à 0
+    source = 0
+    sink = graph.n - 1
+    parent = [-1] * graph.n
+    max_flow = 0
+    iteration = 1
 
-    while bfs(graph.residual, source, sink, parent):  # Tant qu'il existe un chemin augmentant de la source au puits
-        path_flow = float('Inf')  # Initialiser le flot du chemin à l'infini
-        v = sink  # Commencer du puits
-        while v != source:  # Remonter le chemin trouvé par BFS
-            u = parent[v]  # Trouver le parent de v
-            path_flow = min(path_flow, graph.residual[u][v])  # Trouver la capacité résiduelle minimale le long du chemin
-            v = u  # Passer au sommet précédent
+    while bfs(graph.residual, source, sink, parent):
+        print(f"\n\033[1mITERATION {iteration} \033[0m")
+        display_bfs_trace(parent, source, sink, graph.n)
+        path_flow = get_path_flow(graph.residual, parent, source, sink)
+        display_augmenting_path(parent, source, sink, graph.n, path_flow)
+        update_residual_and_flow(graph, parent, source, sink, path_flow)
+        display_residual_graph(graph.residual)
+        max_flow += path_flow
+        iteration += 1
 
-        v = sink  # Recommencer du puits
-        while v != source:  # Remonter le chemin trouvé par BFS
-            u = parent[v]  # Trouver le parent de v
-            graph.residual[u][v] -= path_flow  # Réduire la capacité résiduelle le long du chemin
-            graph.residual[v][u] += path_flow  # Augmenter la capacité résiduelle dans la direction opposée
-            graph.flow[u][v] += path_flow  # Augmenter le flot le long du chemin
-            graph.flow[v][u] -= path_flow  # Réduire le flot dans la direction opposée
-            v = u  # Passer au sommet précédent
+    return max_flow
 
-        max_flow += path_flow  # Ajouter le flot du chemin au flot maximum
 
-    return max_flow  # Retourner le flot maximum trouvé
+def display_bfs_trace(parent, source, sink, n):
+    print("\n\033[1mBFS trace:\033[0m")
+    visited_nodes = []
+    for i in range(n):
+        if parent[i] != -1 and i != source:
+            node = 't' if i == sink else chr(i + 96)
+            pred = 's' if parent[i] == source else ('t' if parent[i] == sink else chr(parent[i] + 96))
+            visited_nodes.append(f"Π({node}) = {pred}")
+    print(" → ".join(visited_nodes))
+
+def get_path_flow(residual, parent, source, sink):
+    flow = float('inf')
+    v = sink
+    while v != source:
+        u = parent[v]
+        flow = min(flow, residual[u][v])
+        v = u
+    return flow
+
+def display_augmenting_path(parent, source, sink, n, path_flow):
+    path = []
+    v = sink
+    while v != source:
+        path.append(v)
+        v = parent[v]
+    path.append(source)
+    path = path[::-1]
+    labels = ['s' if i == 0 else 't' if i == n - 1 else chr(i + 96) for i in path]
+    print(f"Improving chain : [{' → '.join(labels)}] with a flow {path_flow}.")
+
+
+def update_residual_and_flow(graph, parent, source, sink, path_flow):
+    v = sink
+    while v != source:
+        u = parent[v]
+        graph.residual[u][v] -= path_flow
+        graph.residual[v][u] += path_flow
+        graph.flow[u][v] += path_flow
+        graph.flow[v][u] -= path_flow
+        v = u
+
+def display_residual_graph(residual):
+    print("\n\033[1mRESIDUAL GRAPH:\033[0m\n")
+    annotated = annotate_matrix(residual)
+    print_matrix(annotated)
+
 
 
 def push_relabel(graph):
