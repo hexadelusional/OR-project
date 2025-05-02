@@ -1,4 +1,4 @@
-Operations Research Project
+# Operations Research Project
 
 ---
 Small python app able to :
@@ -9,7 +9,7 @@ Small python app able to :
 compute the cost provided a particular flow
 
 ---
-# USAGE
+## USAGE
 Two easy steps : 
 . `git clone https://github.com/hexadelusional/OR-project` into the folder of your choice
 . `py main.py` to run the app. Then, follow the instructions given in the CLI.
