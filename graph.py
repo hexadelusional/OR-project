@@ -36,7 +36,8 @@ class Graphic:
         self.capacity[u][v] = capacity
         self.residual[u][v] = capacity
 
-    # Reading a graph from a file
+
+    # Creates a graph from a txt file
     @classmethod
     def read_graph(cls, filename):
         """
@@ -63,7 +64,7 @@ class Graphic:
                 row = list(map(int, file.readline().strip().split()))
                 graph.capacity[i] = row
             
-            # Reading the cost matrix if it's there
+            # Reads the n remaining lines, for the costs matrix if they exist
             remaining_lines = file.readlines()
             if len(remaining_lines) == n:
                 for i in range(n):

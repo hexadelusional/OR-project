@@ -31,6 +31,7 @@ def bfs(residual, source, sink, parent):
     return False
 
 
+
 def ford_fulkerson(graph):
     """
         Implements the Ford-Fulkerson method using BFS to compute the maximum flow.
