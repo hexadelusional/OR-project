@@ -54,7 +54,7 @@ def plot_point_cloud(results:dict, algorithm_name:str):
 
 
 if __name__ == "__main__":
-    thetas_ff, thetas_pr, thetas_mcf = read_execution_time_data("execution_trace_2.txt")
+    thetas_ff, thetas_pr, thetas_mcf = read_execution_time_data("execution_trace_up_to_1000.txt")
     
     for thetas, algoname in [[thetas_ff, "ff"], [thetas_pr, "pr"], [thetas_mcf, "mcf"]]:
         print(f"\nPlot for {algoname}. Close the window to proceed.\n")

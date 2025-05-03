@@ -1,5 +1,5 @@
 from utils import print_matrix, annotate_matrix, bold
-
+import sys
 
 class Graphic:
     def __init__(self, n):
@@ -78,29 +78,39 @@ class Graphic:
         return graph
 
     # Display of the flow matrix
-    def display_flow(self):
+    def display_flow(self, output=sys.stdout):
         """
             Displays the flow matrix in a formatted and annotated way.
             Assumes that a helper function `annotate_matrix` exists to enhance readability.
         """
-        print(bold(f"\nFLOW MATRIX:"))
+        if output != sys.stdout:
+            print(f"\nFLOW MATRIX:", file=output)
+        else:
+            print(bold(f"\nFLOW MATRIX:"))
         annotated_flow = annotate_matrix(self.flow)
-        print_matrix(annotated_flow)
+        print_matrix(annotated_flow, output_file=output)
 
     # Display of the capacity and cost matrices
-    def display(self):
+    def display(self, output=sys.stdout):
         """
             Displays the capacity matrix and, if available, the cost matrix in a human-readable format.
             Uses helper functions `annotate_matrix` and `print_matrix`.
         """
-        print(bold(f"\nCAPACITY MATRIX:"))
+        if output != sys.stdout:
+            print(f"\nCAPACITY MATRIX:", file=output)
+        else:
+            print(bold(f"\nCAPACITY MATRIX:"))
+
         annotated_capacity = annotate_matrix(self.capacity)
-        print_matrix(annotated_capacity)
+        print_matrix(annotated_capacity, output_file=output)
 
         if self.cost:
-            print(bold(f"\nCOST MATRIX:"))
+            if output != sys.stdout:
+                print(f"\nCOST MATRIX:", file=output)
+            else:
+                print(bold(f"\nCOST MATRIX:"))
             annotated_cost = annotate_matrix(self.cost)
-            print_matrix(annotated_cost)
+            print_matrix(annotated_cost, output_file=output)
 
     # Display of the residual matrix
     def display_residual(self):

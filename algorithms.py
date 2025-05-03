@@ -1,5 +1,6 @@
 from collections import deque
 from utils import print_matrix, annotate_matrix, bold
+import sys
 
 def bfs(residual, source, sink, parent):
     """
@@ -30,9 +31,7 @@ def bfs(residual, source, sink, parent):
                     return True
     return False
 
-
-
-def ford_fulkerson(graph):
+def ford_fulkerson(graph, output=sys.stdout):
     """
         Implements the Ford-Fulkerson method using BFS to compute the maximum flow.
 
@@ -50,23 +49,28 @@ def ford_fulkerson(graph):
 
     # Looping while there is a path from source to sink in the residual graph
     while bfs(graph.residual, source, sink, parent):
-        print(bold(f"\nITERATION {iteration}"))
-        display_bfs_trace(parent, source, sink, graph.n)  # Showing BFS tree
+        if output != sys.stdout:
+            print(f"\nITERATION {iteration}", file=output)
+        else:
+            print(bold(f"\nITERATION {iteration}"), file=output)
+        display_bfs_trace(parent, source, sink, graph.n, output)  # Showing BFS tree
         path_flow = get_path_flow(graph.residual, parent, source, sink)  # Finding the bottleneck
-        display_augmenting_path(parent, source, sink, graph.n, path_flow)  # Showing the augmenting path and its flow
+        display_augmenting_path(parent, source, sink, graph.n, path_flow, output)  # Showing the augmenting path and its flow
         update_residual_and_flow(graph, parent, source, sink, path_flow)  # Updating residual and flow graphs with new flows
-        display_residual_graph(graph.residual)  # Displaying updated residual graph
+        display_residual_graph(graph.residual, output)  # Displaying updated residual graph
         max_flow += path_flow
         iteration += 1
 
     return max_flow
 
-
-def display_bfs_trace(parent, source, sink, n):
+def display_bfs_trace(parent, source, sink, n, output=sys.stdout):
     """
         Displays the BFS tree from the last successful augmenting path search.
     """
-    print(bold(f"\nBFS trace:"))
+    if output != sys.stdout:
+        print(f"\nBFS trace:", file=output)
+    else:
+        print(bold(f"\nBFS trace:"), file=output)
     visited_nodes = []
     for i in range(n):
         if parent[i] != -1 and i != source:
@@ -74,7 +78,7 @@ def display_bfs_trace(parent, source, sink, n):
             node = 't' if i == sink else chr(i + 96)
             pred = 's' if parent[i] == source else ('t' if parent[i] == sink else chr(parent[i] + 96))
             visited_nodes.append(f"Π({node}) = {pred}")
-    print(" → ".join(visited_nodes))
+    print(" → ".join(visited_nodes), file=output)
 
 def get_path_flow(residual, parent, source, sink):
     """
@@ -91,7 +95,7 @@ def get_path_flow(residual, parent, source, sink):
         v = u
     return flow
 
-def display_augmenting_path(parent, source, sink, n, path_flow):
+def display_augmenting_path(parent, source, sink, n, path_flow, output=sys.stdout):
     """
         Displays the path found during BFS and the corresponding flow.
     """
@@ -104,8 +108,10 @@ def display_augmenting_path(parent, source, sink, n, path_flow):
     path = path[::-1]  # Reverse to get path from source to sink
     # Convert node indices to readable labels
     labels = ['s' if i == 0 else 't' if i == n - 1 else chr(i + 96) for i in path]
-    print(f"Improving chain : {bold('[' + ' → '.join(labels) + ']')} with a flow {bold(path_flow)}.")
-
+    if output != sys.stdout:
+        print(f"Improving chain : {'[' + ' → '.join(labels) + ']'} with a flow {path_flow}.", file=output)
+    else:
+        print(f"Improving chain : {bold('[' + ' → '.join(labels) + ']')} with a flow {bold(path_flow)}.", file=output)
 
 def update_residual_and_flow(graph, parent, source, sink, path_flow):
     """
@@ -120,17 +126,19 @@ def update_residual_and_flow(graph, parent, source, sink, path_flow):
         graph.flow[v][u] -= path_flow  # Substracting flow in reverse direction
         v = u
 
-def display_residual_graph(residual):
+def display_residual_graph(residual, output=sys.stdout):
     """
         Displays the current residual graph.
     """
-    print(bold(f"\nRESIDUAL GRAPH"))
+    if output != sys.stdout:
+        print(f"\nRESIDUAL GRAPH", file=output)
+    else:
+        print(bold(f"\nRESIDUAL GRAPH"), file=output)
+
     annotated = annotate_matrix(residual)
-    print_matrix(annotated)
+    print_matrix(annotated, output_file=output)
 
-
-
-def push_relabel(graph, verbose_mode=True):
+def push_relabel(graph, output=sys.stdout, verbose_mode=True):
     """
         Computes the maximum flow using the Push-Relabel algorithm.
 
@@ -158,18 +166,18 @@ def push_relabel(graph, verbose_mode=True):
             excess[source] -= graph.capacity[source][v]
 
     # Function to push the flow from u to v
-    def push(u, v):
+    def push(u, v, output=sys.stdout):
         delta = min(excess[u], graph.capacity[u][v] - graph.flow[u][v])
         graph.flow[u][v] += delta  # Updating the flow from u to v
         graph.flow[v][u] -= delta  # Updating the flow from v to u
         excess[u] -= delta  # Reducing the excess flow at u
         excess[v] += delta  # Increasing the excess flow at v
         if verbose_mode:
-            print(f"\nPush from {u} to {v} (excess diff = {delta}):")
+            print(f"\nPush from {u} to {v} (excess diff = {delta}):", file=output)
 
 
     # Function to relabel a vertex u
-    def relabel(u):
+    def relabel(u, output=sys.stdout):
         min_height = float('Inf')
         for v in range(n):
             if graph.capacity[u][v] > graph.flow[u][v]:  # If the residual capacity is positive
@@ -177,7 +185,7 @@ def push_relabel(graph, verbose_mode=True):
         old_height = height[u]
         height[u] = min_height + 1  # Relabel u with new height
         if verbose_mode:
-            print(f"\nRelabel node {u} (height {old_height} → {height[u]}):")
+            print(f"\nRelabel node {u} (height {old_height} → {height[u]}):", file=output)
 
     # Function to discharge a vertex u
     def discharge(u):
@@ -185,11 +193,11 @@ def push_relabel(graph, verbose_mode=True):
             if seen[u] < n:
                 v = seen[u]
                 if graph.capacity[u][v] > graph.flow[u][v] and height[u] > height[v]:
-                    push(u, v)
+                    push(u, v, output)
                 else:
                     seen[u] += 1
             else:
-                relabel(u)  # Relabelling u if all neighbours have been iterated through
+                relabel(u, output)  # Relabelling u if all neighbours have been iterated through
                 seen[u] = 0
 
     active = [i for i in range(n) if i != source and i != sink]
@@ -201,7 +209,6 @@ def push_relabel(graph, verbose_mode=True):
 
     # Returning the maximum flow
     return sum(graph.flow[v][sink] for v in range(n))
-
 
 def bellman_ford(residual, cost, source, n):
     """
@@ -229,7 +236,7 @@ def bellman_ford(residual, cost, source, n):
 
     return dist, pred
 
-def min_cost_flow(graph, target_flow):
+def min_cost_flow(graph, target_flow, output=sys.stdout):
     """
         Computes the minimum-cost maximum flow for a given flow target using successive shortest augmenting paths.
 
@@ -257,7 +264,7 @@ def min_cost_flow(graph, target_flow):
 
         # Checking for a new path
         if dist[sink] == float('Inf'):
-            print("No path is available to reach the target flow. ")
+            print("No path is available to reach the target flow. ", file=output)
             break
 
         # Finding the maximum flow to push in this path
@@ -289,11 +296,11 @@ def min_cost_flow(graph, target_flow):
             v = u
 
         flow += path_flow
-        print(f"Added flow: {path_flow}, Total flow : {flow}, Total cost : {total_cost}")
+        print(f"Added flow: {path_flow}, Total flow : {flow}, Total cost : {total_cost}", file=output)
 
     # Checking if target flow has been reached
     if flow < target_flow:
-        print("Reaching the target flow is impossible with the current capacities. ")
+        print("Reaching the target flow is impossible with the current capacities. ", file=output)
         return None
 
     return total_cost

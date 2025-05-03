@@ -10,6 +10,15 @@ compute the cost provided a particular flow
 
 ---
 ## USAGE
-Two easy steps : 
+Before anything : 
 - `git clone https://github.com/hexadelusional/OR-project` into the folder of your choice
+
+### Interactive mode:
 - `py main.py` to run the app. Then, follow the instructions given in the CLI.
+
+### Complexity analysis:
+- `py complexity.py` to launch complexity computations. We recommend using pypy instead of py to speed up process
+- `py plot_complexity.py` to plot the data previously collected
+
+### Trace generation:
+- `py generate_traces.py` to create all traces under .txt format
