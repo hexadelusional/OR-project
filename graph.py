@@ -3,50 +3,50 @@ from utils import print_matrix, annotate_matrix
 
 class Graphic:
     def __init__(self, n):
-        # Initialisation de la classe Graphic avec n sommets
-        self.n = n
-        self.capacity = [[0] * n for _ in range(n)]  # Matrice des capacités
-        self.cost = [[0] * n for _ in range(n)]      # Matrice des coûts (optionnelle)
-        self.residual = [[0] * n for _ in range(n)]  # Matrice résiduelle
-        self.flow = [[0] * n for _ in range(n)]      # Matrice des flots
+        # Attributes of the class Graphic
+        self.n = n                                   # Number of vertices
+        self.capacity = [[0] * n for _ in range(n)]  # Matrix for the maximum capacity of each edge
+        self.cost = [[0] * n for _ in range(n)]      # Matrix for the cost of each edge
+        self.residual = [[0] * n for _ in range(n)]  # Residual matrix
+        self.flow = [[0] * n for _ in range(n)]      # Matrix of flows
 
-    # Vérifie si le graphe a des coûts
+    # Verifies if the proposition has costs
     def has_costs(self):
         if self.cost is None:
             return False
         else:
             return True
     
-    # Ajoute une arête avec une capacité donnée entre les sommets u et v
+    # Add an edge between vertices u and v of given capacity
     def add_edge(self, u, v, capacity):
         self.capacity[u][v] = capacity
         self.residual[u][v] = capacity
 
-    # Lit un graphe à partir d'un fichier
+    # Creates a graph from a txt file
     @classmethod
     def read_graph(cls, filename):
         with open(filename, 'r') as file:
-            # Lit le nombre de sommets
+            # First line is the number of vertices 
             n = int(file.readline().strip())
             
-            # Crée une instance de Graphic
+            # Initialize an instance of graph of size n
             graph = cls(n)
             
-            # Lit la matrice des capacités
+            # Reads the n next lines, for the capacity matrix
             for i in range(n):
                 row = list(map(int, file.readline().strip().split()))
                 graph.capacity[i] = row
             
-            # Lit la matrice des coûts optionnelle
+            # Reads the n remaining lines, for the costs matrix if they exist
             remaining_lines = file.readlines()
             if len(remaining_lines) == n:
                 for i in range(n):
                     row = list(map(int, remaining_lines[i].strip().split()))
                     graph.cost[i] = row
             else:
-                graph.cost = None  # Aucune matrice de coûts fournie
+                graph.cost = None  # There is no costs matrix if there aren't n lines remaining
 
-        # Initialise la matrice résiduelle pour qu'elle corresponde initialement à la capacité
+        # Initialize the residual matrix - By default it has the same values as the capacity matrix
         graph.residual = [row[:] for row in graph.capacity]
         return graph
 

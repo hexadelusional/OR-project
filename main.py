@@ -25,12 +25,12 @@ def main():
 
 
         # File path
-        fichier = f"Propositions/Proposition {file_choice}.txt"
-        print(f"File selected : {fichier}")
+        file = f"Propositions/Proposition {file_choice}.txt"
+        print(f"File selected : {file}")
         
-        # Charger le graphe
+        # Display the corresponding graph
         try:
-            graph = Graphic.read_graph(fichier)
+            graph = Graphic.read_graph(file)
             graph.display()
         except FileNotFoundError:
             print("The specified file can't been found. Please make sure the file exists. ")

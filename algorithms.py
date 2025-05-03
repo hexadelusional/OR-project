@@ -2,21 +2,24 @@ from collections import deque
 from utils import print_matrix, annotate_matrix
 
 def bfs(residual, source, sink, parent):
-    n = len(residual)  # Nombre de sommets dans le graphe résiduel
-    visited = [False] * n  # Liste pour suivre les sommets visités
-    queue = deque([source])  # File d'attente pour la recherche en largeur, initialisée avec le sommet source
-    visited[source] = True  # Marquer le sommet source comme visité
+    """
+        Checks if there is a path from the source to the sink considering 
+    """
+    n = len(residual)  # Number of vertices in the residual graph
+    visited = [False] * n  # List that will contain vertices that has been visited 
+    queue = deque([source])  
+    visited[source] = True  # By default, the source is marked as visited
 
-    while queue:  # Tant que la file d'attente n'est pas vide
-        u = queue.popleft()  # Extraire un sommet de la file d'attente
-        for v in range(n):  # Parcourir tous les sommets adjacents
-            if not visited[v] and residual[u][v] > 0:  # Si le sommet n'a pas été visité et qu'il y a une capacité résiduelle
-                parent[v] = u  # Enregistrer le parent de v
-                visited[v] = True  # Marquer le sommet v comme visité
-                queue.append(v)  # Ajouter le sommet v à la file d'attente
-                if v == sink:  # Si le sommet v est le puits
-                    return True  # Chemin trouvé, retourner True
-    return False  # Aucun chemin trouvé, retourner False
+    while queue:  
+        u = queue.popleft()  # Remove the next element from the queue
+        for v in range(n):  
+            if not visited[v] and residual[u][v] > 0: # If v had not been visited yet and there is a residual flow
+                parent[v] = u # Register its parent
+                visited[v] = True # Mark v as visited
+                queue.append(v) # Queue v
+                if v == sink:  # If v happens to be the sink
+                    return True  # Then the path exists and the function returns True
+    return False  # If no path exists, the function returns False
 
 
 def ford_fulkerson(graph):
