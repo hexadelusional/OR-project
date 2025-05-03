@@ -6,7 +6,7 @@ import time
 import copy
 from graph import Graphic
 from algorithms import *
-import matplotlib.pyplot as plt
+
 
 
 ### Generation of random flow problem ###
@@ -33,7 +33,6 @@ def generate_random_proposition(n: int):
     filename = proposition_to_file(capacity_matrix, cost_matrix)
 
     return filename
-
 
 def proposition_to_file(capacity_matrix, cost_matrix):
     """
@@ -77,87 +76,79 @@ def generate_random_graph(file):
 ### Time measurement ###
 
 def measure_ff(graph):
+    """Runs FF on a graph and returns the execution time"""
     start_ff = time.perf_counter()
-    result_ff = ford_fulkerson(graph)
+    max_flow = ford_fulkerson(graph)
     end_ff = time.perf_counter()
-    return result_ff, (end_ff - start_ff) 
+    return max_flow, (end_ff - start_ff) 
 
 def measure_pr(graph):
+    """Runs PR on a graph and returns the execution time"""
     start_pr = time.perf_counter()
-    push_relabel(graph)
+    push_relabel(graph, False)
     end_pr = time.perf_counter()
     return (end_pr - start_pr)
 
 def measure_mcf(graph, target_flow):
+    """Runs MCF on a graph, provided a target flow, and returns the execution time"""
     start_mcf = time.perf_counter()
     min_cost_flow(graph, target_flow)
     end_mcf = time.perf_counter()
     return (end_mcf - start_mcf)
 
-### Point Cloud ###
+### Saving stuff ###
 
-def point_cloud(values_to_test, nb_runs = 100):
+def generate_execution_time_data(graph_sizes: list[int], nb_runs = 100) -> dict:
     results = {}
 
-    for n_val in values_to_test :
-        results[n_val] = {"thetas_ff":[], "thetas_pr" :[], "thetas_mcf":[]}
-        print(f"Running the test for n = {n_val}")
-
+    for size in graph_sizes :
+        results[size] = {"thetas_ff":[], "thetas_pr" :[], "thetas_mcf":[]}
+        
+        print(f"Running the test for n = {size}")
         for _ in range(nb_runs):
-            filename = generate_random_proposition(n_val)
-            graph = generate_random_graph(filename)
+            # initialize a random graph 
+            capacity_matrix, cost_matrix = generate_proposition(size)
+            n_vertices = len(capacity_matrix)
+            graph = Graphic(n_vertices)
 
+            graph.capacity = capacity_matrix
+            graph.cost = cost_matrix
+
+            #   Measure execution times for each algorithm
             # Measure Ford-Fulkerson
-            max_ff_flow, theta_ff = measure_ff(copy.deepcopy(graph))
-            results[n_val]["thetas_ff"].append(theta_ff)
+            max_ff_flow, theta_ff = measure_ff(graph)
+            results[size]["thetas_ff"].append(theta_ff)
             
             # Measure Push-Relabel
-            theta_pr = measure_pr(copy.deepcopy(graph))
-            results[n_val]["thetas_pr"].append(theta_pr)
+            theta_pr = measure_pr(graph)
+            results[size]["thetas_pr"].append(theta_pr)
 
             # Measure min-cost flow
-            if graph.has_costs :
-                theta_mcf = measure_mcf(copy.deepcopy(graph), max_ff_flow//2)
-                results[n_val]["thetas_mcf"].append(theta_mcf)
-            print(f"\nVALUE {n_val}: θFF={theta_ff} | θPR={theta_pr} | θMIN={theta_mcf} |\n")
+            theta_mcf = measure_mcf(graph, max_ff_flow//2)
+            results[size]["thetas_mcf"].append(theta_mcf)
+
+
+            # print(f"\nVALUE {size}: θFF={theta_ff} | θPR={theta_pr} | θMIN={theta_mcf} |\n")
     return results
 
-def plot_point_cloud(results):
-    plt.figure(figsize=(10, 6))
-    for n_val, thetas in results.items():
-        # Plot Ford-Felkerson results
-        plt.scatter([n_val] * len(thetas["thetas_ff"]), thetas["thetas_ff"], 
-                    color='blue', label='θFF(n)' if n_val == list(results.keys())[0] else "", alpha=0.6)
-        # Plot Push-Relabel results
-        plt.scatter([n_val] * len(thetas["thetas_pr"]), thetas["thetas_pr"], 
-                    color='green', label='θPR(n)' if n_val == list(results.keys())[0] else "", alpha=0.6)
-        # Plot Min-Cost-Flow results
-        if thetas["thetas_mcf"] :
-            plt.scatter([n_val] * len(thetas["thetas_mcf"]), thetas["thetas_mcf"], 
-                        color='red', label='θMIN(n)' if n_val == list(results.keys())[0] else "", alpha=0.6)
+def save_execution_time_data(execution_time_data: dict, path_to_file) -> None:
+    # Write to file
+    new_file_path = path_to_file
+    while os.path.exists(new_file_path):
+        new_file_path = "execution_trace_" + str(int(new_file_path[-5])+1) + ".txt"
+    
+    with open(new_file_path, "w") as f:
+        f.write(str(execution_time_data))
 
-    plt.xlabel('n -> Size of the problem')
-    plt.ylabel('Time (seconds)')
-    plt.title('Point Cloud: Execution times in function of n')
-    plt.legend(title="Algorithms", loc='upper right', fontsize=10)
 
-    plt.grid(True)
-    plt.show()
+
 
 # Juste pour les tests
-time_results = point_cloud([10, 20], 10)
-plot_point_cloud(time_results)
+t1 = time.time()
 
-# LES VRAIS TRUCS A LANCER
-# time_results = point_cloud([10, 20, 40, 100, 400, 4000])
-# plot_point_cloud(time_results)
+time_results = generate_execution_time_data([10, 20, 40, 100, 200, 400, 1000], 100)
+save_execution_time_data(time_results, "execution_trace_0.txt")
 
-
-
-
-
-
-
-
-
+t2 = time.time()
+print(f"whole process lasted {t2-t1}s")
 
