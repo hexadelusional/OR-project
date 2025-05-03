@@ -1,42 +1,43 @@
 from graph import Graphic
 from algorithms import *
+from utils import print_matrix, bold
 import copy
 
 def main():
-    print("Welcome to our Operations Research project !")
-    
+    print_matrix([['Ingé1 INT-1 • Group 5'], ['Adèle Chamoux'], ['Mattéo Launay'], ['Paul Leflon'], ['Iriantsoa Rasoloarivalona']], header_column=False)
+    print(bold("Welcome to our Operations Research project !"))
+
     running = True
     while running:
-        # Ask the user to choose a file
+        # Asking the user to choose a proposal file
         file_choice_loop = True
         while file_choice_loop:
             try:
-                file_choice = int(input("\nChoose a number between 1 and 10 (0 to exit): "))
+                file_choice = int(input("\nChoose a proposal between 1 and 10 (0 to exit): "))
                 if 0 <= file_choice <= 10:
                     break
                 else:
-                    print("Choose a number between 1 and 10 (0 to exit): ")
+                    print("Choose a proposal between 1 and 10 (0 to exit): ")
             except ValueError:
-                print("Invalid number. Choose a number between 1 and 10: ")
+                print("Invalid proposal. Please indicate a proposal number between 1 and 10: ")
         
         if file_choice == 0:
-            print("ok Bye !")
-            break 
+            print(bold("Bye !"))
+            break
 
-
-        # File path
-        fichier = f"Propositions/Proposition {file_choice}.txt"
-        print(f"File selected : {fichier}")
+        # Setting the file path
+        file = f"Propositions/Proposition {file_choice}.txt"
+        print(f"You chose the following proposal : {file}")
         
-        # Charger le graphe
+        # Loading the graph
         try:
-            graph = Graphic.read_graph(fichier)
+            graph = Graphic.read_graph(file)
             graph.display()
         except FileNotFoundError:
             print("The specified file can't been found. Please make sure the file exists. ")
             return
         
-        # Ask the user to choose an algorithm
+        # Asking the user to choose an algorithm
         print("\nChoose an algorithm to treat the problem:")
         print("1. Ford-Fulkerson")
         print("2. Push-Relabel")
@@ -58,23 +59,23 @@ def main():
                 else:
                     print("Please enter a valid number.")
             except ValueError:
-                print("Invalid input. Please indicate a algorithm number. ")
+                print("Invalid input. Please indicate a algorithm number between 1 and 2. ")
 
-        # Execute the chosen algorithm
+        # Executing the chosen algorithm
         if algo_choice == 1:
             max_flow = ford_fulkerson(graph)
             graph.display_flow()
-            print(f"\nMaximal flow with Ford-Fulkerson : {max_flow}")
+            print(f"\nMaximal flow with Ford-Fulkerson : {bold(max_flow)}")
         elif algo_choice == 2:
             max_flow = push_relabel(graph)
             graph.display_flow()
-            print(f"\nMaximal flow with Push-Relabel : {max_flow}")
+            print(f"\nMaximal flow with Push-Relabel : {bold(max_flow)}")
         elif algo_choice == 3:
             copy_graph = copy.deepcopy(graph)
             max_flow = ford_fulkerson(copy_graph)
             while True:
                 try:
-                    print(f"\nThe maximum flow is of {max_flow}.", end=" ")
+                    print(f"\nThe maximum flow is of {bold(max_flow)}. \n")
                     target_flow = int(input("Enter the value of target flow : "))
                     if target_flow > 0 and target_flow <= max_flow:
                         break
@@ -85,7 +86,7 @@ def main():
             
             total_cost = min_cost_flow(graph, target_flow)
             graph.display_flow()
-            print(f"\nTotal cost of the flow : {total_cost}")
+            print(f"\nTotal cost of the flow :", bold(f"{total_cost}"))
 
 if __name__ == "__main__":
     main()
