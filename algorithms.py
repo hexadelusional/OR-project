@@ -130,7 +130,7 @@ def display_residual_graph(residual):
 
 
 
-def push_relabel(graph):
+def push_relabel(graph, verbose_mode=True):
     """
         Computes the maximum flow using the Push-Relabel algorithm.
 
@@ -164,7 +164,8 @@ def push_relabel(graph):
         graph.flow[v][u] -= delta  # Updating the flow from v to u
         excess[u] -= delta  # Reducing the excess flow at u
         excess[v] += delta  # Increasing the excess flow at v
-        print(f"\nPush from {u} to {v} (excess diff = {delta}):")
+        if verbose_mode:
+            print(f"\nPush from {u} to {v} (excess diff = {delta}):")
 
 
     # Function to relabel a vertex u
@@ -175,7 +176,8 @@ def push_relabel(graph):
                 min_height = min(min_height, height[v])  # Find the minimal height trough neighbours
         old_height = height[u]
         height[u] = min_height + 1  # Relabel u with new height
-        print(f"\nRelabel node {u} (height {old_height} → {height[u]}):")
+        if verbose_mode:
+            print(f"\nRelabel node {u} (height {old_height} → {height[u]}):")
 
     # Function to discharge a vertex u
     def discharge(u):
