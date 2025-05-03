@@ -30,7 +30,7 @@ for i in range(1,11):
     graph = Graphic.read_graph(f"Proposition {i}.txt")
 
     for algo in ["FF", "PR", "MIN"]:
-        with open(os.path.join("../traces/", f"INT1-trace{i}-{algo}.txt"), "w", encoding="utf8") as trace:
+        with open(os.path.join("../traces/", f"INT1_5-trace{i}-{algo}.txt"), "w", encoding="utf8") as trace:
             graph.display(trace)
             match algo:
                 case "FF":
