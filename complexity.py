@@ -8,32 +8,31 @@ from graph import Graphic
 from algorithms import *
 import matplotlib.pyplot as plt
 
-def generate_proposition(n: int) -> tuple[list[list[int]], list[list[int]]]:
+
+### Generation of random flow problem ###
+def generate_random_proposition(n: int):
     """
-        Returns a capacity and a cost matrix which c_ij and d_ij values are random between 1 and 100
+        Creates the capacity and cost matrices to feed into a .txt file in the proposition_to_file fun
         Args: integer n, the size of the matrix
     """
-    # initialize the two matrices c and d.
-    capacity_matrix = [[0 for j in range(n)] for i in range(n)] 
+    capacity_matrix = [[0 for j in range(n)] for i in range(n)]
     cost_matrix = [[0 for j in range(n)] for i in range(n)]
 
-    nb_editions_left = math.floor((n**2)/2)
+    nb_values = math.floor((n**2)/2)
     couples_edited = set()
     
-    while nb_editions_left > 0:
-        i, j = 0, 0
-        # assign random integers to i and j as long as the couple does not meet the requirements
-        while (i == j or ((i,j) in couples_edited) or i == n - 1) :
-            i, j = random.randint(0, n - 1),  random.randint(0, n - 1)
-        
-        capacity_matrix[i][j] = random.randint(1, 100)
-        # cost_matrix[i][j] = capacity_matrix[i][j] // 2
-        cost_matrix[i][j] = random.randint(1, 100)
-        
-        couples_edited.add((i,j))   # add the new vertex so that we cannot edit it again by error
-        nb_editions_left -= 1
+    while nb_values > 0 :
+        i, j = 0,0
+        while (i==j or ((i,j) in couples_edited) or i==n-1) :
+            i, j = random.randint(0,n-1),  random.randint(0,n-1 )
+        capacity_matrix[i][j] = random.randint(1,100)
+        cost_matrix[i][j] = random.randint(1,100)
+        couples_edited.add((i,j))
+        nb_values-=1
+    
+    filename = proposition_to_file(capacity_matrix, cost_matrix)
 
-    return capacity_matrix, cost_matrix
+    return filename
 
 
 def proposition_to_file(capacity_matrix, cost_matrix):
@@ -146,16 +145,19 @@ def plot_point_cloud(results):
     plt.show()
 
 # Juste pour les tests
-time_results = point_cloud([10], 10)
+time_results = point_cloud([10, 20], 10)
 plot_point_cloud(time_results)
 
 # LES VRAIS TRUCS A LANCER
 # time_results = point_cloud([10, 20, 40, 100, 400, 4000])
 # plot_point_cloud(time_results)
 
-if __name__ == "__main__":
-    n = int(input("How many vertices for your 'fake' proposition?"))
-    capacity_matrix, cost_matrix = generate_proposition(n)
 
-    if 'y' == input("Should we save it ? [y/n]").lower():
-        proposition_to_file(capacity_matrix, cost_matrix)
+
+
+
+
+
+
+
+
