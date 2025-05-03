@@ -10,7 +10,7 @@ from algorithms import *
 
 
 ### Generation of random flow problem ###
-def generate_random_proposition(n: int):
+def generate_random_proposition(n: int, save: bool):
     """
         Creates the capacity and cost matrices to feed into a .txt file in the proposition_to_file fun
         Args: integer n, the size of the matrix
@@ -30,9 +30,10 @@ def generate_random_proposition(n: int):
         couples_edited.add((i,j))
         nb_values-=1
     
-    filename = proposition_to_file(capacity_matrix, cost_matrix)
+    if save:
+        proposition_to_file(capacity_matrix, cost_matrix)
 
-    return filename
+    return capacity_matrix, cost_matrix 
 
 def proposition_to_file(capacity_matrix, cost_matrix):
     """
@@ -107,7 +108,7 @@ def generate_execution_time_data(graph_sizes: list[int], nb_runs = 100) -> dict:
         print(f"Running the test for n = {size}")
         for _ in range(nb_runs):
             # initialize a random graph 
-            capacity_matrix, cost_matrix = generate_proposition(size)
+            capacity_matrix, cost_matrix = generate_random_proposition(size, save=False)
             n_vertices = len(capacity_matrix)
             graph = Graphic(n_vertices)
 
