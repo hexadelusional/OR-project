@@ -105,8 +105,12 @@ def point_cloud(values_to_test, nb_runs = 100):
         print(f"Running the test for n = {n_val}")
 
         for _ in range(nb_runs):
-            filename = generate_random_proposition(n_val)
-            graph = generate_random_graph(filename)
+            capacity_matrix, cost_matrix = generate_proposition(n_val)
+            n_vertices = len(capacity_matrix)
+            graph = Graphic(n_vertices)
+
+            graph.capacity = capacity_matrix
+            graph.cost = cost_matrix
 
             # Measure Ford-Fulkerson
             max_ff_flow, theta_ff = measure_ff(copy.deepcopy(graph))
@@ -117,7 +121,7 @@ def point_cloud(values_to_test, nb_runs = 100):
             results[n_val]["thetas_pr"].append(theta_pr)
 
             # Measure min-cost flow
-            if graph.has_costs :
+            if graph.has_costs() :
                 theta_mcf = measure_mcf(copy.deepcopy(graph), max_ff_flow//2)
                 results[n_val]["thetas_mcf"].append(theta_mcf)
             print(f"\nVALUE {n_val}: θFF={theta_ff} | θPR={theta_pr} | θMIN={theta_mcf} |\n")
@@ -153,9 +157,3 @@ plot_point_cloud(time_results)
 # time_results = point_cloud([10, 20, 40, 100, 400, 4000])
 # plot_point_cloud(time_results)
 
-if __name__ == "__main__":
-    n = int(input("How many vertices for your 'fake' proposition?"))
-    capacity_matrix, cost_matrix = generate_proposition(n)
-
-    if 'y' == input("Should we save it ? [y/n]").lower():
-        proposition_to_file(capacity_matrix, cost_matrix)
