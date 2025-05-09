@@ -1,6 +1,6 @@
 import os
 import copy
-from sys import stdout
+import sys
 from typing import Any
 DISABLE_ANSI = False
 
@@ -40,7 +40,7 @@ def annotate_matrix(to_annotate: list[list[Any]], annotation_charset: list[Any] 
     return annotated_version
 
 
-def print_matrix(matrix, cell_padding=2, header_row=True, header_column=True, output_file=stdout) -> None:
+def print_matrix(matrix, cell_padding=2, header_row=True, header_column=True, output_file=sys.stdout) -> None:
     N = len(matrix)
     M = len(matrix[0])
     border_top = '┏'  # Top border of the table
@@ -68,7 +68,10 @@ def print_matrix(matrix, cell_padding=2, header_row=True, header_column=True, ou
             cell = line[j]
             padded = str(line[j]).center(col_lengths[j], ' ')
             if i == 0 and header_row or j == 0 and header_column:
-                padded = bold(padded)
+                if output_file != sys.stdout:
+                    padded = padded
+                else:
+                    padded = bold(padded)
             row += padded + '┃'
         print(row, file=output_file)
         if i + 1 < N:  # We print a separator after each row, except the last one since the bottom border comes afterwards

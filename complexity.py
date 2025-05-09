@@ -86,7 +86,7 @@ def measure_ff(graph):
 def measure_pr(graph):
     """Runs PR on a graph and returns the execution time"""
     start_pr = time.perf_counter()
-    push_relabel(graph, False)
+    push_relabel(graph, output=sys.stdout, verbose_mode=False)
     end_pr = time.perf_counter()
     return (end_pr - start_pr)
 
@@ -147,7 +147,7 @@ def save_execution_time_data(execution_time_data: dict, path_to_file) -> None:
 # Juste pour les tests
 t1 = time.time()
 
-time_results = generate_execution_time_data([10, 20, 40, 100, 200, 400, 1000], 100)
+time_results = generate_execution_time_data([10, 50, 100], 100)
 save_execution_time_data(time_results, "execution_trace_0.txt")
 
 t2 = time.time()

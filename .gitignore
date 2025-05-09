@@ -7,12 +7,17 @@ venv/
 env/
 
 # IDE and editor files
+.idea/*
 .idea/
 .vscode/
 
 # Logs and temporary files
 *.log
 *.tmp
+
+# Traces
+traces/*
+traces/
 
 # OS-specific files
 .DS_Store
