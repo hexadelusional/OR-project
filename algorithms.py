@@ -166,6 +166,14 @@ def push_relabel(graph, output=sys.stdout, verbose_mode=True):
             excess[source] -= graph.capacity[source][v]
 
     # Function to push the flow from u to v
+    def char_to(vertex, n):
+        if vertex == 0 :
+            return 's'
+        elif vertex == (n-1):
+            return 't'
+        else :
+            return chr(vertex+ord('a')-1)
+
     def push(u, v, output=sys.stdout):
         delta = min(excess[u], graph.capacity[u][v] - graph.flow[u][v])
         graph.flow[u][v] += delta  # Updating the flow from u to v
@@ -173,7 +181,8 @@ def push_relabel(graph, output=sys.stdout, verbose_mode=True):
         excess[u] -= delta  # Reducing the excess flow at u
         excess[v] += delta  # Increasing the excess flow at v
         if verbose_mode:
-            print(f"\nPush from {u} to {v} (excess diff = {delta}):", file=output)
+            print(f"\nPush from {char_to(u, graph.n)} to {char_to(v, graph.n)} (excess diff = {delta}):")
+
 
 
     # Function to relabel a vertex u
@@ -185,7 +194,8 @@ def push_relabel(graph, output=sys.stdout, verbose_mode=True):
         old_height = height[u]
         height[u] = min_height + 1  # Relabel u with new height
         if verbose_mode:
-            print(f"\nRelabel node {u} (height {old_height} → {height[u]}):", file=output)
+            print(f"\nRelabel node {char_to(u, graph.n)} (height {old_height} → {height[u]}):")
+
 
     # Function to discharge a vertex u
     def discharge(u):
